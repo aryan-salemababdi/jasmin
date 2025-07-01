@@ -3,7 +3,7 @@
 ![Jasmin Logo](https://your-logo-url.com/logo.png)
 
 > The next-generation, modern JavaScript testing framework —  
-> Simpler, faster, and more powerful than Jest!
+> Simpler, faster, and more powerful!
 
 ---
 
