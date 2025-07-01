@@ -1,32 +1,20 @@
+// example.test.js
 import { Jasmin } from './core/Jasmin.js';
+import { mockFn } from './mock/fn.js';
 import { Expect } from './matchers/expect.js';
+import { builtInMatchers } from './matchers/builtInMatchers.js';
 
-Expect.extend({
-  toBeGreaterThan(received, expected) {
-    const pass = received > expected;
-    return {
-      pass,
-      message: pass
-        ? `Expected ${received} not to be greater than ${expected}`
-        : `Expected ${received} to be greater than ${expected}`,
-    };
-  }
-});
+Expect.extend(builtInMatchers);
 
 const j = new Jasmin();
 
-j.describe('Parallel Suite', () => {
-  j.test('Fast test', (expect) => {
-    expect(1 + 1).toBe(2);
-  });
-
-  j.test('Slow test', async (expect) => {
-    await new Promise((res) => setTimeout(res, 500));
-    expect(true).toBe(true);
-  });
-
-  j.test('Fail test', (expect) => {
-    expect(1).toBe(2);
+j.describe('Mock Function Suite', () => {
+  j.test('mock should work correctly', (expect) => {
+    const mock = mockFn((x) => x + 2);
+    mock(1);
+    mock(2);
+    expect(mock).toHaveBeenCalledTimes(2);
+    expect(mock).toHaveReturnedWith(4);
   });
 });
 

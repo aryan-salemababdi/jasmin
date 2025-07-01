@@ -72,14 +72,13 @@ export class Expect {
   }
 }
 
-// متد استاتیک برای افزودن matcher کاستوم
 Expect.extend = function (matchers) {
   for (const name in matchers) {
     if (typeof matchers[name] !== "function") {
       throw new Error(`Matcher ${name} must be a function`);
     }
     Expect.customMatchers[name] = matchers[name];
-    // به کلاس Expect، متد داینامیک اضافه کنیم
+    // Add the matcher to the Expect prototype
     Expect.prototype[name] = function (...args) {
       return this.runCustomMatcher(name, ...args);
     };

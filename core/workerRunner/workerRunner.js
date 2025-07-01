@@ -1,7 +1,6 @@
 import { parentPort, workerData } from 'node:worker_threads';
 import { expect } from '../../matchers/matches.js';
 
-// دریافت دیتای تست از والد
 const { name, fnString } = workerData;
 
 const runTest = async () => {
