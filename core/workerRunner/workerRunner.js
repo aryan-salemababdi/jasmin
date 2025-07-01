@@ -1,16 +1,21 @@
 import { parentPort, workerData } from 'node:worker_threads';
-import { expect } from '../../matchers/matches.js';
+import { Expect } from '../../matchers/expect.js';
 
-const { name, fnString } = workerData;
 
-const runTest = async () => {
+const { name, fnString, filePath } = workerData;
+
+const expect = (value) =>
+  new Expect(value, false, {
+    testName: name,
+    filePath,
+  });
+
+(async () => {
   try {
     const fn = eval(`(${fnString})`);
     await fn(expect);
-    parentPort.postMessage({ status: 'passed', name });
+    parentPort.postMessage({ status: 'passed' });
   } catch (err) {
-    parentPort.postMessage({ status: 'failed', name, error: err.message });
+    parentPort.postMessage({ status: 'failed', error: err.message });
   }
-};
-
-runTest();
+})();

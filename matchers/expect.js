@@ -1,12 +1,16 @@
+import { SnapshotManager } from '../snapshot/snapshotManager.js';
+
 export class Expect {
   static customMatchers = {};
-  constructor(received, isNegated = false) {
+
+  constructor(received, isNegated = false, testMeta = null) {
     this.received = received;
     this.isNegated = isNegated;
+    this.testMeta = testMeta; // { testName, filePath }
   }
 
   get not() {
-    return new Expect(this.received, !this.isNegated);
+    return new Expect(this.received, !this.isNegated, this.testMeta);
   }
 
   _pass(condition, failMessage) {
@@ -40,24 +44,24 @@ export class Expect {
   }
 
   toThrow(expectedMessage) {
-    if (typeof this.received !== "function") {
-      throw new Error("Expected a function to test .toThrow");
+    if (typeof this.received !== 'function') {
+      throw new Error('Expected a function to test .toThrow');
     }
 
     try {
       this.received();
     } catch (err) {
       if (!expectedMessage || err.message.includes(expectedMessage)) return;
-      else
+      else {
         throw new Error(
           `Expected error message to include "${expectedMessage}" but got "${err.message}"`
         );
+      }
     }
 
-    throw new Error("Expected function to throw an error, but it didn’t");
+    throw new Error('Expected function to throw an error, but it didn’t');
   }
 
-  // متد برای اجرای matcherهای کاستوم
   runCustomMatcher(name, ...args) {
     const matcherFn = Expect.customMatchers[name];
     if (!matcherFn) {
@@ -70,15 +74,37 @@ export class Expect {
 
     this._pass(pass, message);
   }
+
+  toMatchSnapshot() {
+    if (!this.testMeta) {
+      throw new Error('Snapshot testing requires test metadata (filePath & testName)');
+    }
+
+    const manager = new SnapshotManager(this.testMeta.filePath);
+
+    const serialized = typeof this.received === 'string'
+      ? this.received
+      : JSON.stringify(this.received, null, 2);
+
+    const result = manager.compareSnapshot(this.testMeta.testName, serialized);
+    manager.persist();
+
+    if (!result.match) {
+      const msg = result.new
+        ? '🆕 Snapshot created'
+        : '❌ Snapshot mismatch!';
+      throw new Error(msg);
+    }
+  }
 }
 
 Expect.extend = function (matchers) {
   for (const name in matchers) {
-    if (typeof matchers[name] !== "function") {
+    if (typeof matchers[name] !== 'function') {
       throw new Error(`Matcher ${name} must be a function`);
     }
+
     Expect.customMatchers[name] = matchers[name];
-    // Add the matcher to the Expect prototype
     Expect.prototype[name] = function (...args) {
       return this.runCustomMatcher(name, ...args);
     };
