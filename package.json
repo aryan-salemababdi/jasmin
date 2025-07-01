@@ -9,5 +9,8 @@
     "jasmin": "node bin/jasmin.js"
   },
   "author": "Aryan Salemabadi",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.4.1"
+  }
 }
