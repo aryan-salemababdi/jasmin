@@ -1,20 +1,33 @@
 import { Jasmin } from './core/Jasmin.js';
+import { Expect } from './matchers/expect.js';
+
+Expect.extend({
+  toBeGreaterThan(received, expected) {
+    const pass = received > expected;
+    return {
+      pass,
+      message: pass
+        ? `Expected ${received} not to be greater than ${expected}`
+        : `Expected ${received} to be greater than ${expected}`,
+    };
+  }
+});
 
 const j = new Jasmin();
 
-j.describe('Matchers Suite', () => {
-  j.test('expect().toBe()', (expect) => {
-    expect(3 + 2).toBe(5);
+j.describe('Parallel Suite', () => {
+  j.test('Fast test', (expect) => {
+    expect(1 + 1).toBe(2);
   });
 
-  j.test('expect().not.toEqual()', (expect) => {
-    expect({ x: 1 }).not.toEqual({ x: 2 });
+  j.test('Slow test', async (expect) => {
+    await new Promise((res) => setTimeout(res, 500));
+    expect(true).toBe(true);
   });
 
-  j.test('expect().toThrow()', (expect) => {
-    expect(() => {
-      throw new Error('Boom');
-    }).toThrow('Boom');
+  j.test('Fail test', (expect) => {
+    expect(1).toBe(2);
   });
 });
+
 await j.run();
