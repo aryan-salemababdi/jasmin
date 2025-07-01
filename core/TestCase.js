@@ -1,13 +1,15 @@
+import { Worker } from 'node:worker_threads';
+import path from 'path';
 import { performance } from 'node:perf_hooks';
 
 export class TestCase {
   constructor(name, fn, options = {}) {
     this.name = name;
     this.fn = fn;
-    this.beforeEachHook = null;
-    this.afterEachHook = null;
     this.skipped = options.skip || false;
     this.reporter = null;
+    this.beforeEachHook = null;
+    this.afterEachHook = null;
   }
 
   setHooks(beforeEach, afterEach) {
@@ -30,15 +32,17 @@ export class TestCase {
     try {
       if (this.beforeEachHook) await this.beforeEachHook();
 
-      const expect = await import('../matchers/matches.js'); 
-      await this.fn(expect.expect);
+      const result = await this.runInWorker();
 
       const duration = (performance.now() - start).toFixed(2);
-
-      if (duration > 100) {
-        this.reporter.logSlow(this.name, duration);
+      if (result.status === 'passed') {
+        if (duration > 100) {
+          this.reporter.logSlow(this.name, duration);
+        } else {
+          this.reporter.logSuccess(this.name, duration);
+        }
       } else {
-        this.reporter.logSuccess(this.name, duration);
+        this.reporter.logFailure(this.name, duration, { message: result.error });
       }
     } catch (err) {
       const duration = (performance.now() - start).toFixed(2);
@@ -46,5 +50,24 @@ export class TestCase {
     } finally {
       if (this.afterEachHook) await this.afterEachHook();
     }
+  }
+
+  runInWorker() {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(path.resolve('core/workerRunner/workerRunner.js'), {
+        workerData: {
+          name: this.name,
+          fnString: this.fn.toString(),
+        },
+      });
+
+      worker.on('message', resolve);
+      worker.on('error', reject);
+      worker.on('exit', (code) => {
+        if (code !== 0) {
+          reject(new Error(`Worker stopped with code ${code}`));
+        }
+      });
+    });
   }
 }

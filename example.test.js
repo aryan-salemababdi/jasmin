@@ -1,20 +1,21 @@
+// example.test.js
 import { Jasmin } from './core/Jasmin.js';
+import { mockFn } from './mock/fn.js';
+import { Expect } from './matchers/expect.js';
+import { builtInMatchers } from './matchers/builtInMatchers.js';
+
+Expect.extend(builtInMatchers);
 
 const j = new Jasmin();
 
-j.describe('Matchers Suite', () => {
-  j.test('expect().toBe()', (expect) => {
-    expect(3 + 2).toBe(5);
-  });
-
-  j.test('expect().not.toEqual()', (expect) => {
-    expect({ x: 1 }).not.toEqual({ x: 2 });
-  });
-
-  j.test('expect().toThrow()', (expect) => {
-    expect(() => {
-      throw new Error('Boom');
-    }).toThrow('Boom');
+j.describe('Mock Function Suite', () => {
+  j.test('mock should work correctly', (expect) => {
+    const mock = mockFn((x) => x + 2);
+    mock(1);
+    mock(2);
+    expect(mock).toHaveBeenCalledTimes(2);
+    expect(mock).toHaveReturnedWith(4);
   });
 });
+
 await j.run();
