@@ -6,7 +6,7 @@
     "jasmin": "./cli.js"
   },
   "scripts": {
-    "test": "node cli.js"
+    "jasmin": "node bin/jasmin.js"
   },
   "author": "Aryan Salemabadi",
   "license": "MIT"

@@ -9,12 +9,19 @@ export class TestCase {
   }
 
   async run() {
+    const start = performance.now();
+
     try {
       if (this.beforeEachHook) await this.beforeEachHook();
-      await this.fn(assert); // assert اصلی Node به عنوان ورودی
-      console.log(`  ✅ ${this.name}`);
+
+      await this.fn(assert);
+
+      const duration = (performance.now() - start).toFixed(2);
+      console.log(`  ✅ ${this.name} (${duration}ms)`);
+
     } catch (err) {
-      console.log(`  ❌ ${this.name}`);
+      const duration = (performance.now() - start).toFixed(2);
+      console.log(`  ❌ ${this.name} (${duration}ms)`);
       console.error(`     ${err.message}`);
     } finally {
       if (this.afterEachHook) await this.afterEachHook();
