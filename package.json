@@ -1,0 +1,13 @@
+{
+  "name": "jasmin",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "jasmin": "./cli.js"
+  },
+  "scripts": {
+    "test": "node cli.js"
+  },
+  "author": "Aryan Salemabadi",
+  "license": "MIT"
+}
