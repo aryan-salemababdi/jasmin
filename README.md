@@ -34,3 +34,12 @@ Jasmin is the ultimate tool for serious developers and large-scale projects.
 
 ```bash
 npm install jasmin-testing-framework
+
+```
+
+
+
+##  🤝 Contributing
+
+Jasmin is an open-source project and welcomes contributions!
+If you want to suggest features, report bugs, or improve docs, please join us on GitHub.
