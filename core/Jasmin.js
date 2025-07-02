@@ -35,12 +35,22 @@ export class Jasmin {
     this.rootSuite.setAfterEach(fn);
   }
 
-  async run() {
-    if (this.onlyTests.length > 0) {
-      this.onlyTests.forEach(t => t.setReporter(this.reporter));
-      this.rootSuite.tests = this.onlyTests;
-    }
-
-    await this.rootSuite.run();
+async run() {
+  if (this.onlyTests.length > 0) {
+    this.onlyTests.forEach(t => t.setReporter(this.reporter));
+    this.rootSuite.tests = this.onlyTests;
   }
+
+  const tests = this.rootSuite.tests;
+
+  tests.forEach(test => {
+    test.setReporter(this.reporter);
+    test.setHooks(this.rootSuite.beforeEach, this.rootSuite.afterEach);
+  });
+
+
+  await Promise.all(tests.map(test => test.run()));
+
+  this.reporter.reportSummary();
+}
 }
