@@ -2,15 +2,27 @@ import { Jasmin } from './core/Jasmin.js';
 
 const j = new Jasmin();
 
-j.describe('Parallel Snapshot Suite', () => {
-  j.test('snapshot test 1', (expect) => {
-    const user = { id: 1, name: 'Aryan' };
-    expect(user).toMatchSnapshot();
+j.beforeEach(() => {
+  console.log('🧼 Running before each test');
+});
+
+j.afterEach(() => {
+  console.log('🧼 Finished a test');
+});
+
+j.describe('Math Suite', () => {
+  j.test('should add numbers', () => {
+    const result = 2 + 2;
+    if (result !== 4) throw new Error('Addition failed');
   });
 
-  j.test('snapshot test 2', (expect) => {
-    const html = '<div class="title">Hello World</div>';
-    expect(html).toMatchSnapshot();
+  j.only('should only run this test', () => {
+    const str = 'jasmin';
+    if (!str.includes('jas')) throw new Error('Substring check failed');
+  });
+
+  j.skip('should be skipped', () => {
+    throw new Error('Should not run');
   });
 });
 

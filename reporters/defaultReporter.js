@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
 export class DefaultReporter {
   constructor() {
@@ -6,7 +6,7 @@ export class DefaultReporter {
   }
 
   indent() {
-    return '  '.repeat(this.indentLevel);
+    return "  ".repeat(this.indentLevel);
   }
 
   startSuite(name) {
@@ -19,11 +19,15 @@ export class DefaultReporter {
   }
 
   logSuccess(name, duration) {
-    console.log(`${this.indent()}✅ ${chalk.green(name)} ${chalk.gray(`(${duration}ms)`)}`);
+    console.log(
+      `${this.indent()}✅ ${chalk.green(name)} ${chalk.gray(`(${duration}ms)`)}`
+    );
   }
 
   logFailure(name, duration, error) {
-    console.log(`${this.indent()}❌ ${chalk.red(name)} ${chalk.gray(`(${duration}ms)`)}`);
+    console.log(
+      `${this.indent()}❌ ${chalk.red(name)} ${chalk.gray(`(${duration}ms)`)}`
+    );
     console.log(`${this.indent()}   ${chalk.redBright(error.message)}`);
   }
 
@@ -32,7 +36,15 @@ export class DefaultReporter {
   }
 
   logSlow(name, duration, threshold = 100) {
-    const icon = duration > 300 ? '🐌' : '🐢';
-    console.log(`${this.indent()}⚠️  ${icon} ${chalk.yellow(name)} ${chalk.gray(`(${duration}ms - slow)`)} `);
+    const icon = duration > 300 ? "🐌" : "🐢";
+    console.log(
+      `${this.indent()}⚠️  ${icon} ${chalk.yellow(name)} ${chalk.gray(
+        `(${duration}ms - slow)`
+      )} `
+    );
+  }
+
+  reportSummary() {
+    console.log("\n" + chalk.bold.magenta("✨ Test execution complete.\n"));
   }
 }
