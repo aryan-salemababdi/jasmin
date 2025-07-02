@@ -33,7 +33,7 @@ Jasmin is the ultimate tool for serious developers and large-scale projects.
 1. Install:
 
 ```bash
-npm install jasmin-testing-framework
+npm install jasminest
 
 ```
 
