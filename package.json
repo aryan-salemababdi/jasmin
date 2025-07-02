@@ -1,7 +1,10 @@
 {
   "name": "jasminest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
+  "exports": {
+    ".": "./core/Jasmin.js"
+  },
   "bin": {
     "jasmin": "./cli.js"
   },
