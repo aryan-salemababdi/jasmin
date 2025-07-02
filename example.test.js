@@ -1,20 +1,16 @@
-// example.test.js
 import { Jasmin } from './core/Jasmin.js';
-import { mockFn } from './mock/fn.js';
-import { Expect } from './matchers/expect.js';
-import { builtInMatchers } from './matchers/builtInMatchers.js';
-
-Expect.extend(builtInMatchers);
 
 const j = new Jasmin();
 
-j.describe('Mock Function Suite', () => {
-  j.test('mock should work correctly', (expect) => {
-    const mock = mockFn((x) => x + 2);
-    mock(1);
-    mock(2);
-    expect(mock).toHaveBeenCalledTimes(2);
-    expect(mock).toHaveReturnedWith(4);
+j.describe('Parallel Snapshot Suite', () => {
+  j.test('snapshot test 1', (expect) => {
+    const user = { id: 1, name: 'Aryan' };
+    expect(user).toMatchSnapshot();
+  });
+
+  j.test('snapshot test 2', (expect) => {
+    const html = '<div class="title">Hello World</div>';
+    expect(html).toMatchSnapshot();
   });
 });
 
